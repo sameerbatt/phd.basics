@@ -1,0 +1,43 @@
+//.dat file to .root conversion.
+#include <fstream>
+#include <iostream>
+#include "TFile.h"
+#include "TTree.h"
+
+using namespace std;
+
+void x2root()
+{
+    ifstream file("x2data.dat");
+
+    TFile *Tf = new TFile("x2data.root", "RECREATE");
+    TTree *Tree = new TTree("tree", "Particle data");
+
+    int event, np, j;
+    float eta[1000], phi[1000];
+
+    Tree->Branch("event", &event, "event/I");
+    Tree->Branch("np", &np, "np/I");
+    Tree->Branch("eta", &eta, "eta[np]/F");
+    Tree->Branch("phi", &phi, "phi[np]/F");
+
+    while (file >> event >> np)
+    {
+        int i = 1;
+
+        while (i <= np)
+        {
+            file >> j >> eta[i-1] >> phi[i-1];       
+            i++;
+        }
+        
+        Tree->Fill();
+    }
+
+    Tree->Write();
+
+    file.close();
+    Tf->Close();
+
+    cout << "ROOT file created successfully." << endl;
+}
