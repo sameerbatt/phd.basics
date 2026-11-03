@@ -1,9 +1,8 @@
-//.root to .dat file conversion.
+//Converting .root to .dat file.
 #include <fstream>
 #include <iostream>
 #include "TFile.h"
 #include "TTree.h"
-
 using namespace std;
 
 void x2dat()
