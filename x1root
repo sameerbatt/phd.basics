@@ -1,0 +1,46 @@
+//.root to .dat file conversion.
+#include <fstream>
+#include <iostream>
+#include "TFile.h"
+#include "TTree.h"
+
+using namespace std;
+
+void x2dat()
+{
+    TFile *Tf = new TFile("x2data.root");
+    TTree *Tree = (TTree*)Tf->Get("tree");
+
+    ofstream file("x3data.dat");
+
+    int event, np;
+    float eta[1000], phi[1000];
+
+    Tree->SetBranchAddress("event", &event);
+    Tree->SetBranchAddress("np", &np);
+    Tree->SetBranchAddress("eta", eta);
+    Tree->SetBranchAddress("phi", phi);
+
+    Long64_t NEntries = Tree->GetEntries();
+
+    for (Long64_t i = 0; i < NEntries; i++)
+    {
+        Tree->GetEntry(i);
+
+        file << event << "\t" << np << endl;
+
+        int j = 1;
+
+        while (j <= np)
+        {
+            file << j << "\t"<< eta[j-1] << "\t"<< phi[j-1] 
+            << endl;
+            j++;
+        }
+    }
+
+    file.close();
+    Tf->Close();
+
+    cout << "DAT file created successfully." << endl;
+}
